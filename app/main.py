@@ -6,6 +6,7 @@ from fastapi import FastAPI, Form, HTTPException
 from app.utilities.bio_metrics_utils import log_metrics_in_es
 from app.utilities.data_utils import parse_text_message
 from app.utilities.decorators import validate_user_auth_level, messaging_response
+from app.utilities.messaging_utils import get_messaging_response
 from app.utilities.pydantic_models import ResponseContent
 
 app = FastAPI()
@@ -31,6 +32,12 @@ def record_weight(
         raise HTTPException(status_code=500, detail=response_content.error_message)
 
     return response_content
+
+
+@app.post("/notify/error", status_code=200)
+@messaging_response("An error occurred.")
+def notify_user_of_error(*args, **kwargs):
+    return
 
 
 

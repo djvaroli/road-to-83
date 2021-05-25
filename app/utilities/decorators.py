@@ -43,16 +43,18 @@ def validate_user_auth_level(level: int, field: str):
 
 
 def messaging_response(
-        success_message: str
+        message: str,
+        media_type: str = "text/xml"
 ):
+
     def wrapper(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
             message_response = MessagingResponse()
             result = f(*args, **kwargs)
-            msg = message_response.message(success_message)
+            msg = message_response.message(message)
 
-            return message_response
+            return Response(content=str(message_response), media_type=media_type)
         return wrapped
     return wrapper
 

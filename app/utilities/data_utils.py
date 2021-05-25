@@ -29,5 +29,9 @@ def parse_text_message(
 
     return result
 
-def clean_and_split_string(s: str):
-    return re.sub('[^A-Za-z0-9]+', ' ', s).lower().split()
+
+def clean_and_split_string(
+        s: str,
+        split_char: str = " "
+):
+    return re.sub('[^A-Za-z0-9\.]+', ' ', s).lower().split(split_char)
