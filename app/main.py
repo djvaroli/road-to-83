@@ -1,12 +1,12 @@
 import time
 from typing import *
 
-from fastapi import FastAPI, Form, Response, HTTPException
-from twilio.twiml.messaging_response import MessagingResponse
+from fastapi import FastAPI, Form, HTTPException
 
-from app.utilities.bio_metrics_utils import log_metrics_in_redis, log_metrics_in_es
+from app.utilities.bio_metrics_utils import log_metrics_in_es
 from app.utilities.data_utils import parse_text_message
-from app.utilities.decorators import validate_user_auth_level, notify_user_if_failed
+from app.utilities.decorators import validate_user_auth_level, messaging_response
+from app.utilities.pydantic_models import ResponseContent
 
 app = FastAPI()
 
@@ -18,23 +18,19 @@ def home():
 
 
 @app.post("/record", status_code=201)
-# @notify_user_if_failed
+@messaging_response("Metrics stored successfully!")
 @validate_user_auth_level(level=5, field="From")
 def record_weight(
         From: str =  Form(default=None),
         Body: str = Form(default=None),
-        timestamp: int = int(time.time()),
-        index: Optional[str] = None
+        timestamp: int = int(time.time())
 ):
     metrics = parse_text_message(Body)
-    result, status, message = log_metrics_in_es(metrics, user_id=From, timestamp=timestamp, index=index)
-    message_response = MessagingResponse()
+    response_content: ResponseContent = log_metrics_in_es(metrics, user_id=From, timestamp=timestamp)
+    if response_content.status != "success":
+        raise HTTPException(status_code=500, detail=response_content.error_message)
 
-    if status != "ok":
-        raise HTTPException(status_code=500, detail=message)
-
-    msg = message_response.message("Metrics logged successfully!")
-    return message_response
+    return response_content
 
 
 

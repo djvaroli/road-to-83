@@ -5,28 +5,25 @@ from twilio.twiml.messaging_response import MessagingResponse
 
 from app.utilities.auth_utils import get_user_auth_level
 from app.utilities.logging_utils import get_logger
+from app.utilities.pydantic_models import ResponseContent
 
 
 logger = get_logger(__name__)
 
 
-def request_status(f):
+def add_request_status_info(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
         try:
-            result = f(*args, **kwargs)
-            status = "ok"
-            message = "Operation completed successfully!"
-        except TimeoutError as e:
-            result = None
-            status = "failed"
-            message = "Operation timed out, try again later!"
+            data = f(*args, **kwargs)
+            status = "success"
+            error = None
         except Exception as e:
-            result = None
+            data = None
             status = "failed"
-            message = "A server-side error occurred!"
+            error = e
 
-        return result, status, message
+        return ResponseContent(data=data, error_message=error, status=status)
     return wrapped
 
 
@@ -45,18 +42,19 @@ def validate_user_auth_level(level: int, field: str):
     return wrapper
 
 
-def notify_user_if_failed(f):
-    @wraps(f)
-    def wrapped(*args, **kwargs):
-        rsp = MessagingResponse()
-        try:
+def messaging_response(
+        success_message: str
+):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            message_response = MessagingResponse()
             result = f(*args, **kwargs)
-        except Exception as e:
-            logger.warning(e)
-            msg = rsp.message("A server-side error occurred.")
-            return rsp
+            msg = message_response.message(success_message)
 
-        return result
-    return wrapped
+            return message_response
+        return wrapped
+    return wrapper
+
 
 
