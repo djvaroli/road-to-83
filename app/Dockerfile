@@ -10,7 +10,7 @@ COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
 # copy the contents of the application folder into our container
-COPY ./app .
+COPY . .
 
 # modify permissions of entry-point script
 RUN ["chmod", "+x", "scripts/start.sh"]
