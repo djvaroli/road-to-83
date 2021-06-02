@@ -15,6 +15,11 @@ SMS_COMMAND_OPERATION = {
 def get_messaging_response(
         message: str = None
 ):
+    """
+    Helper function returning an instance of the twilio.twiml.messaging_response.MessagingResponse object
+    :param message:
+    :return:
+    """
     messaging_response = MessagingResponse()
     if message:
         messaging_response.message(message)
@@ -25,6 +30,11 @@ def get_messaging_response(
 def get_pipeline_for_sms_command(
         sms_body: str
 ):
+    """
+    Returns the correct pipeline for processing an sms request
+    :param sms_body:
+    :return:
+    """
     sms_body_split = clean_and_split_string(sms_body)
     command = sms_body_split[0]
 
