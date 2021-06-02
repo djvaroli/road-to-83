@@ -1,6 +1,6 @@
 
 
-from app.utilities.redis_utils import get_redis_client
+from redis_utils import get_redis_client
 
 
 def get_user_auth_level(

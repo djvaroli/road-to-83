@@ -2,11 +2,12 @@ import re
 
 
 VALID_LOGGING_FIELDS = [
-    'weight'
+    'weight', "calories"
 ]
 
 FIELD_PROCESSING_OP = {
-    "weight": float
+    "weight": float,
+    "calories": float
 }
 
 

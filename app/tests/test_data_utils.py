@@ -1,4 +1,4 @@
-from app.utilities.data_utils import clean_and_split_string
+from app.data_utils import clean_and_split_string
 
 
 def test_clean_and_split_string():

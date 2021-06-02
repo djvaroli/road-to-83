@@ -3,9 +3,9 @@ from functools import wraps
 from fastapi import HTTPException, Response
 from twilio.twiml.messaging_response import MessagingResponse
 
-from app.utilities.auth_utils import get_user_auth_level
-from app.utilities.logging_utils import get_logger
-from app.utilities.pydantic_models import ResponseContent
+from auth_utils import get_user_auth_level
+from logging_utils import get_logger
+from pydantic_models import ResponseContent
 
 
 logger = get_logger(__name__)

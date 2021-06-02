@@ -5,10 +5,10 @@ from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
 
 
-from app.utilities.logging_utils import get_logger
+from logging_utils import get_logger
 
 logger = get_logger(__name__)
-load_dotenv("../.env")
+load_dotenv()
 
 
 BONSAI_URL = os.environ['BONSAI_URL']
