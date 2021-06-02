@@ -22,7 +22,8 @@ def log_metrics_in_es(
         user_id: str,
         timestamp: int = time.time(),
         index: str = "road83-metric-logs",
-        timezone: pytz.timezone = get_localzone()
+        timezone: pytz.timezone = get_localzone(),
+        document_id: Optional[str] = None
 ):
     es = elasticsearch_utils.get_es_client()
 
@@ -32,7 +33,12 @@ def log_metrics_in_es(
         "user_id": user_id
     }
 
-    return es.index(index=index, body=document)
+    if document_id:
+        result = es.index(index, body=document, id=document_id)
+    else:
+        result = es.index(index, body=document)
+
+    return result
 
 
 @add_request_status_info

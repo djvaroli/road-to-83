@@ -5,13 +5,13 @@ Utility functions for messaging interactions
 from twilio.twiml.messaging_response import MessagingResponse
 
 from data_utils import clean_and_split_string
-from pipelines import sms_to_log_metric_pipeline, sms_to_calorie_summary_pipeline
-
+from pipelines import sms_to_log_metric_pipeline, sms_to_calorie_summary_pipeline, sms_to_what_if_calorie_pipeline
 
 SMS_COMMAND_OPERATION = {
     "summary": sms_to_calorie_summary_pipeline,
     "calories": sms_to_log_metric_pipeline,
-    "weight": sms_to_log_metric_pipeline
+    "weight": sms_to_log_metric_pipeline,
+    "if": sms_to_what_if_calorie_pipeline
 }
 
 

@@ -35,3 +35,17 @@ def get_es_client():
     }]
 
     return Elasticsearch(es_header)
+
+
+def delete_document_by_id(
+        document_id: str,
+        index: str
+):
+    """
+    Deletes a document from the Elasticsearch database using the document id
+    :param document_id:
+    :param index:
+    :return:
+    """
+    es = get_es_client()
+    return es.delete(index=index, id=document_id)
