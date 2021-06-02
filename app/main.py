@@ -1,11 +1,11 @@
 import time
 
 from fastapi import FastAPI, Form, HTTPException
+from twilio.twiml.messaging_response import MessagingResponse
 
 from messaging_utils import get_pipeline_for_sms_command
 from bio_metrics_utils import get_calorie_window_stats
 from decorators import validate_user_auth_level, messaging_response
-from pydantic_models import ResponseContent
 
 app = FastAPI()
 
@@ -20,8 +20,7 @@ def home():
     return "Hello there!"
 
 
-@app.post("/interact/sms", status_code=201)
-@messaging_response("Success!")
+@app.post("/interact/sms", status_code=200)
 @validate_user_auth_level(level=5, field="From")
 def interact_sms(
         From: str =  Form(default=None),
@@ -37,11 +36,8 @@ def interact_sms(
     """
 
     pipeline = get_pipeline_for_sms_command(Body)
-    response_content: ResponseContent = pipeline(Body, From, timestamp)
-    if response_content.status != "success":
-        raise HTTPException(status_code=500, detail=response_content.error_message)
-
-    return response_content
+    message: MessagingResponse = pipeline(Body, From, timestamp)
+    return message
 
 
 @app.post("/notify/error", status_code=200)

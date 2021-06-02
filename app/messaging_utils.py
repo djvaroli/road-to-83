@@ -1,12 +1,15 @@
+"""
+Utility functions for messaging interactions
+"""
+
 from twilio.twiml.messaging_response import MessagingResponse
 
 from data_utils import clean_and_split_string
-from bio_metrics_utils import get_calorie_window_stats, log_metrics_in_es
-from pipelines import sms_to_log_metric_pipeline
+from pipelines import sms_to_log_metric_pipeline, sms_to_calorie_summary_pipeline
 
 
 SMS_COMMAND_OPERATION = {
-    "summary": get_calorie_window_stats,
+    "summary": sms_to_calorie_summary_pipeline,
     "calories": sms_to_log_metric_pipeline,
     "weight": sms_to_log_metric_pipeline
 }

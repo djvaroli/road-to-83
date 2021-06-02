@@ -46,7 +46,12 @@ def messaging_response(
         message: str,
         media_type: str = "text/xml"
 ):
-
+    """
+    Takes the result string and converts into a twilio Messaging Response to be returned by the API
+    :param message:
+    :param media_type:
+    :return:
+    """
     def wrapper(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
@@ -58,5 +63,20 @@ def messaging_response(
         return wrapped
     return wrapper
 
+
+def messaging_response_result(f):
+    """
+    Takes the result string and converts into a twilio Messaging Response to be returned by the API
+    :param: f
+    :return:
+    """
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        message_response = MessagingResponse()
+        message = f(*args, **kwargs)
+        msg = message_response.message(message)
+
+        return Response(content=str(message_response), media_type="text/xml")
+    return wrapped
 
 

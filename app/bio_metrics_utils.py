@@ -39,12 +39,16 @@ def log_metrics_in_es(
 def get_calorie_window_stats(
         window_size_days: int = 7,
         index: str = "road83-metric-logs",
-        field: str = "calories"
+        field: str = "calories",
+        order: str = "desc"
 ):
     es = elasticsearch_utils.get_es_client()
 
     query = {
         "size": 5000,
+        "sort": [
+            {"date": {"order": order}}
+        ],
         "query": {
             "bool": {
                 "must": [
