@@ -1,6 +1,8 @@
 """
  Pipelines for processing data and performing an action
 """
+import time
+
 from elasticsearch_utils import delete_document_by_id
 from decorators import messaging_response, messaging_response_result
 from bio_metrics_utils import log_metrics_in_es, get_calorie_window_stats
@@ -73,12 +75,16 @@ def sms_to_what_if_calorie_pipeline(
 ):
     # replace the 'if' part so that we can use this function like we would in a regular situation
     sms_body = sms_body.replace("if", '')
+    sms_body = sms_body.replace("If", '')
     metrics = parse_text_message(sms_body)
 
     # log this as a "tomorrow" event to not mess with the counting
     # TODO better way to do this overall
     timestamp += 24 * 3600
     result = log_metrics_in_es(metrics, user_id=from_, timestamp=timestamp, document_id="document-to-delete")
+
+    time.sleep(1)  # terrible but for validation purposes will do
+
     response_content: ResponseContent = get_calorie_window_stats()
     data = response_content.data
 
