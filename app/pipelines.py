@@ -8,24 +8,6 @@ from pydantic_models import ResponseContent
 from data_utils import parse_text_message
 
 
-@messaging_response
-def sms_to_log_metric_pipeline(
-        sms_body: str,
-        from_: str,
-        timestamp: int
-) -> str:
-    """
-    Takes information in a sms message and stores the appropriate metric in the database
-    :param sms_body:
-    :param from_:
-    :param timestamp:
-    :return:
-    """
-    metrics = parse_text_message(sms_body)
-    result = log_metrics_in_es(metrics, user_id=from_, timestamp=timestamp)
-    return "Metrics logged successfully!"
-
-
 def create_summary_sms(
         data: dict
 ):
@@ -46,6 +28,24 @@ def create_summary_sms(
     summary_string += f"7 Day Difference: {net_difference}"
 
     return summary_string
+
+
+@messaging_response
+def sms_to_log_metric_pipeline(
+        sms_body: str,
+        from_: str,
+        timestamp: int
+) -> str:
+    """
+    Takes information in a sms message and stores the appropriate metric in the database
+    :param sms_body:
+    :param from_:
+    :param timestamp:
+    :return:
+    """
+    metrics = parse_text_message(sms_body)
+    result = log_metrics_in_es(metrics, user_id=from_, timestamp=timestamp)
+    return "Metrics logged successfully!"
 
 
 @messaging_response_result
@@ -71,20 +71,18 @@ def sms_to_what_if_calorie_pipeline(
         from_: str,
         timestamp: int
 ):
+    # replace the 'if' part so that we can use this function like we would in a regular situation
     sms_body = sms_body.replace("if", '')
     metrics = parse_text_message(sms_body)
 
     # log this as a "tomorrow" event to not mess with the counting
     # TODO better way to do this overall
-
     timestamp += 24 * 3600
     result = log_metrics_in_es(metrics, user_id=from_, timestamp=timestamp, document_id="document-to-delete")
-    print(result)
     response_content: ResponseContent = get_calorie_window_stats()
     data = response_content.data
 
     summary_text = create_summary_sms(data)
     result = delete_document_by_id("document-to-delete", index="road83-metric-logs")
-    print(result)
     return summary_text
 

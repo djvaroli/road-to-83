@@ -40,12 +40,6 @@ def interact_sms(
     return message
 
 
-@app.post("/notify/error", status_code=200)
-@messaging_response("An error occurred.")
-def notify_user_of_error(*args, **kwargs):
-    return
-
-
 @app.get("/history/window_calories")
 def get_calorie_stats_in_window(
         windowSizeDays: int = 7
