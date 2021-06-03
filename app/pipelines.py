@@ -32,7 +32,7 @@ def create_summary_sms(
     return summary_string
 
 
-@messaging_response
+@messaging_response_result
 def sms_to_log_metric_pipeline(
         sms_body: str,
         from_: str,
