@@ -13,7 +13,8 @@ from decorators import add_request_status_info
 
 load_dotenv()
 
-DAILY_CALORIE_NEED = int(os.environ.get("DAILY_CALORIE_NEED", 2000))
+DAILY_CALORIE_NEED = int(os.environ.get("DAILY_CALORIE_NEED", 2300))
+MAINTENANCE_CALORIES = int(os.environ.get("MAINTENANCE_CALORIES", 2700))
 
 
 @add_request_status_info
@@ -103,8 +104,9 @@ def get_calorie_window_stats(
             field: date_calories
         })
 
-    average_daily_calories = round(total_calories_in_window / len(unique_dates), 2)
+    average_daily_calories = int(total_calories_in_window / len(unique_dates))
     net_difference = DAILY_CALORIE_NEED * len(unique_dates) - total_calories_in_window
+    net_deficit = MAINTENANCE_CALORIES * len(unique_dates) - total_calories_in_window
 
     result['summary'] = {
         "total_calories": total_calories_in_window,
@@ -113,7 +115,10 @@ def get_calorie_window_stats(
         "average_daily_calories": average_daily_calories,
         "average_daily_calorie_need": DAILY_CALORIE_NEED,
         "average_daily_difference": DAILY_CALORIE_NEED - average_daily_calories,
-        "net_difference": net_difference
+        "net_difference": net_difference,
+        "average_daily_maintenance_calories": MAINTENANCE_CALORIES,
+        "average_daily_caloric_deficit": MAINTENANCE_CALORIES - average_daily_calories,
+        "net_calorie_deficit": net_deficit
     }
 
     return result
