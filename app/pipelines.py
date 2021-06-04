@@ -22,10 +22,12 @@ def create_summary_sms(
     daily_average_calories = data['summary']['average_daily_calories']
     daily_average_difference = data['summary']['average_daily_difference']
     net_difference = data['summary']['net_difference']
+    daily_goal = data['summary']['average_daily_calorie_need']
 
     summary_string += "\n"
     summary_string += f"Total calories: {total_calories}\n"
     summary_string += f"Daily average: {daily_average_calories}\n"
+    summary_string += f"Daily average goal: {daily_goal}\n"
     summary_string += f"Daily difference: {daily_average_difference}\n"
     summary_string += f"7 Day Difference: {net_difference}"
 
