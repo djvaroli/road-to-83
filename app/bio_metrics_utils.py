@@ -88,7 +88,7 @@ def get_calorie_window_stats(
     unique_dates = set()
     for hit in hits:
         date = parser.parse(hit['date'])
-        display_date = date.strftime("%a %B %d")
+        display_date = date.strftime("%d %B %Y")
 
         # only use the first entry for a specific day in case double texting happened
         # TODO need a better way to handle this case
