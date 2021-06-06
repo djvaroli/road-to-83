@@ -1,35 +1,84 @@
+$background-color: #E0F4FF;
 $primary-color: #0ea7ff;
 $accent-color: #2F94CE;
 $text-color: #005281;
 
+$mobile-screen-max-width: 992px;
+
+$dashboard-card-border-radius: 5px;
+
+$directions: 'left', 'right', 'top', 'bottom';
+$increments: 1, 2, 3;
+
+
+@mixin bordered-dashboard-card-mixin {
+  border: 1px solid $accent-color;
+  padding: 1rem;
+}
+
+@mixin bordered-dashboard-card-top {
+  @include bordered-dashboard-card-mixin;
+  border-top-right-radius: $dashboard-card-border-radius;
+  border-top-left-radius: $dashboard-card-border-radius;
+}
+
+@mixin bordered-dashboard-card-bottom {
+  @include bordered-dashboard-card-mixin;
+  border-bottom-right-radius: $dashboard-card-border-radius;
+  border-bottom-left-radius: $dashboard-card-border-radius;
+}
+
+@mixin bordered-dashboard-card {
+  @include bordered-dashboard-card-mixin;
+  margin: 0 1rem;
+  border-radius: $dashboard-card-border-radius;
+}
+
+@mixin mobile-dashboard-card-styling {
+  max-width: 100%;
+  margin: 0.5rem 1rem;
+}
+
+
 .summary-table {
   flex-grow: 1;
+  max-width: 35%;
+  text-align: left;
   .summary-table-header {
+    @include bordered-dashboard-card-top;
     margin-bottom: 0.25rem;
-    border: 1px solid $accent-color;
-    border-top-right-radius: 5px;
-    border-top-left-radius: 5px;
-    padding: 0.5rem;
     font-size: 1.5rem;
   }
   .summary-table-content{
-    border: 1px solid $accent-color;
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-    padding: 1rem;
+    @include bordered-dashboard-card-bottom;
     line-height: 2rem;
+  }
+  @media screen and (max-width: $mobile-screen-max-width){
+    @include mobile-dashboard-card-styling;
   }
 }
 
-.align-items-left {
-  text-align: left;
-}
-
-.chart {
-  flex-grow: 2;
+.figure {
+  @include bordered-dashboard-card;
+  flex-grow: 1;
+  //max-width: 60%;
+  @media screen and (max-width: $mobile-screen-max-width){
+    @include mobile-dashboard-card-styling;
+  }
 }
 
 .font-size-2 {
   font-size: 2rem;
 }
+
+.margin-left-1 {
+  margin-left: 1rem;
+}
+
+@each $direction in $directions {
+  @each $i in $increments  {
+    .margin-#{$direction}-#{$i} { margin-#{$direction}: #{$i}rem; }
+  }
+}
+
 @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@100;400;700&display=swap');

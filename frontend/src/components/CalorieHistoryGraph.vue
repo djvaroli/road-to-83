@@ -1,6 +1,8 @@
 <template>
-  <div id="chart" class="chart">
-    <apexchart type="line" height="350" :options="chartOptions" :series="series"></apexchart>
+  <div id="calorie-summary-figure" class="figure flex-item-space-right">
+    <div class="plot">
+      <apexchart type="line" height="350" :options="chartOptions" :series="series"></apexchart>
+    </div>
   </div>
 </template>
 

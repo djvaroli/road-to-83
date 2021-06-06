@@ -1,6 +1,6 @@
 import time
 
-from fastapi import FastAPI, Form, HTTPException
+from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
 from twilio.twiml.messaging_response import MessagingResponse
 
@@ -89,11 +89,11 @@ def get_calorie_stats_in_window(
                 "type": "line"
             },
             "stroke": {
-                "width": [1, 4, 4, 4],
+                "width": [1, 3, 3, 3],
                 "dashArray": [0, 5, 5, 5],
             },
             "title": {
-                "text": 'Calorie Consumption'
+                "text": f'Calorie Consumption (last {windowSizeDays} days)'
             },
             "dataLabels": {
                 "enabled": True,
@@ -113,6 +113,14 @@ def get_calorie_stats_in_window(
         }
     }
     return stats
+
+
+@app.post("/calories/entry/create")
+def create_new_calorie_entry(
+        calories: int
+):
+    print(calories)
+    return {}
 
 
 
