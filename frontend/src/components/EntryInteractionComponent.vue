@@ -67,6 +67,8 @@
 <script>
 import axios from 'axios';
 
+const urlBase = "http://127.0.0.1:8003";
+
 export default {
   name: "EntryInteractionComponent",
   data() {
@@ -80,20 +82,16 @@ export default {
   methods: {
     createEntry() {
       if (!this.newCalorieQuantity) {
-        this.$buefy.toast.open({
-          message: "You forgot to enter a calorie amount!",
-          type: "is-danger",
-          position: "is-top-right"
-        })
-
+        this.openDangerToast("You forgot to enter a calorie amount!");
         return;
       }
-      const url="http://127.0.0.1:8003/calories/entry/create"
+      const url = urlBase + "/calories/entry/create"
       axios.post(url, {
         "calories": parseInt(this.newCalorieQuantity)
       })
-      .then( (response) => {
-        console.log(response);
+      .then( () => {
+        this.openSuccessToast("Entry created successfully!");
+        this.emitEntryUpdate();
       })
       .catch( (error) => {
         console.log(error);
@@ -101,19 +99,58 @@ export default {
     },
     editEntry() {
       if (!this.editCalorieQuantity || !this.editEntryId) {
-        this.$buefy.toast.open({
-          message: "You forgot to enter a calorie amount or ID of document to edit!",
-          type: "is-danger"
-        })
+        this.openDangerToast("You forgot to enter a calorie amount or ID of document to edit!");
+        return
       }
+
+      const url = urlBase + "/calories/entry/edit";
+      axios.post(url, {
+        "document_id": this.editEntryId,
+        "updatedDocument": {
+          "calories": parseInt(this.editCalorieQuantity)
+        }
+      })
+      .then( () => {
+        this.openSuccessToast("Entry updated!");
+        this.emitEntryUpdate();
+      })
+      .catch( () => {
+        this.openDangerToast("Could not update document!");
+      })
     },
     deleteEntry() {
       if (!this.deleteEntryId) {
-        this.$buefy.toast.open({
-          message: "You forgot to enter the ID of the document to delete!",
-          type: "is-danger"
-        })
+        this.openDangerToast("You forgot to enter the ID of the document to delete!")
+        return;
       }
+      const url="http://127.0.0.1:8003/calories/entry/delete";
+      axios.post(url, {
+        document_id: this.deleteEntryId
+      })
+      .then( () => {
+        this.openSuccessToast("Entry deleted successfully");
+        this.emitEntryUpdate();
+      })
+      .catch( () => {
+        this.openDangerToast("Could not delete document!")
+      })
+    },
+    openDangerToast(message) {
+      this.openToast(message, "is-danger");
+    },
+    openSuccessToast(message) {
+      this.openToast(message, "is-success");
+    },
+    openToast(message, type) {
+      this.$buefy.toast.open({
+        message: message,
+        type: type,
+        position: "is-top-right"
+      })
+    },
+    emitEntryUpdate() {
+      console.log("Emitting!");
+      this.$emit("entry-update");
     }
   }
 }

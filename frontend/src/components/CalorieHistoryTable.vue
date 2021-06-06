@@ -9,7 +9,7 @@
         {{ props.row.display_date }}
       </b-table-column>
 
-      <b-table-column field="calories" label="Calories" v-slot="props" numeric="true">
+      <b-table-column field="calories" label="Calories" v-slot="props" :numeric="true">
         {{ props.row.calories }}
       </b-table-column>
       <template #empty>
