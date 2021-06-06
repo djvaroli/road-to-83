@@ -4,8 +4,8 @@
       <CalorieHistoryGraph :series="data.series" :chartOptions="data.chartOptions"></CalorieHistoryGraph>
     </div>
     <div class="dashboard-row">
-      <CalorieHistoryTable :history="data.history"></CalorieHistoryTable>
       <CalorieSummaryTable :calorieSummaryData="data.calorieSummaryData"></CalorieSummaryTable>
+      <CalorieHistoryTable :history="data.history"></CalorieHistoryTable>
     </div>
   </div>
 </template>

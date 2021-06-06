@@ -16,7 +16,6 @@
 <script>
 import CalorieDashboard from "./components/CalorieDashboard";
 import EntryInteractionComponent from "./components/EntryInteractionComponent";
-import axios from "axios";
 
 export default {
   name: 'App',
@@ -35,11 +34,10 @@ export default {
   },
   methods: {
     fetchData() {
-      const url = "http://127.0.0.1:8003/history/window_calories";
       const params = {
         windowSizeDays: 14
       }
-      axios.get(url, {
+      this.axios.get("/history/window_calories", {
         params: params
       })
       .then((response) => {
@@ -63,6 +61,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: $text-color;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 </style>

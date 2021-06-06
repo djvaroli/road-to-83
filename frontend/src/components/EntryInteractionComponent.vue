@@ -8,6 +8,16 @@
             placeholder="Enter calories"
         >
         </b-input>
+        <b-field>
+          <b-datetimepicker
+              placeholder="Type or select a date..."
+              v-model="selectedDate"
+              icon="calendar-today"
+              :locale="undefined"
+              class="margin-left-1"
+              editable>
+          </b-datetimepicker>
+        </b-field>
         <b-button
             id="new-calorie-entry-button"
             icon-left="plus-circle"
@@ -65,9 +75,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
-const urlBase = "http://127.0.0.1:8003";
 
 export default {
   name: "EntryInteractionComponent",
@@ -76,18 +83,19 @@ export default {
       newCalorieQuantity: null,
       editCalorieQuantity: null,
       editEntryId: null,
-      deleteEntryId: null
+      deleteEntryId: null,
+      selectedDate: new Date()
     }
   },
   methods: {
     createEntry() {
-      if (!this.newCalorieQuantity) {
-        this.openDangerToast("You forgot to enter a calorie amount!");
+      if (!this.newCalorieQuantity || !this.selectedDate) {
+        this.openDangerToast("You forgot to enter a calorie amount or date of entry!");
         return;
       }
-      const url = urlBase + "/calories/entry/create"
-      axios.post(url, {
-        "calories": parseInt(this.newCalorieQuantity)
+      this.axios.post("/calories/entry/create", {
+        "calories": parseInt(this.newCalorieQuantity),
+        "timestamp": parseInt(this.selectedDate.getTime() / 1000)
       })
       .then( () => {
         this.openSuccessToast("Entry created successfully!");
@@ -103,8 +111,7 @@ export default {
         return
       }
 
-      const url = urlBase + "/calories/entry/edit";
-      axios.post(url, {
+      this.axios.post("/calories/entry/edit", {
         "document_id": this.editEntryId,
         "updatedDocument": {
           "calories": parseInt(this.editCalorieQuantity)
@@ -123,8 +130,8 @@ export default {
         this.openDangerToast("You forgot to enter the ID of the document to delete!")
         return;
       }
-      const url="http://127.0.0.1:8003/calories/entry/delete";
-      axios.post(url, {
+
+      this.axios.post("/calories/entry/delete", {
         document_id: this.deleteEntryId
       })
       .then( () => {
@@ -149,7 +156,6 @@ export default {
       })
     },
     emitEntryUpdate() {
-      console.log("Emitting!");
       this.$emit("entry-update");
     }
   }
