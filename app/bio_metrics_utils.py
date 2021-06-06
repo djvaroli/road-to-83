@@ -76,8 +76,7 @@ def get_calorie_window_stats(
         }
     }
 
-    hits = es.search(index=index, body=query)['hits']['hits']
-    hits = [hit_['_source'] for hit_ in hits]
+    documents = es.search(index=index, body=query)['hits']['hits']
 
     result = {
         "history": [],
@@ -86,7 +85,8 @@ def get_calorie_window_stats(
 
     total_calories_in_window = 0
     unique_dates = set()
-    for hit in hits:
+    for doc in documents:
+        hit = doc['_source']
         date = parser.parse(hit['date'])
         display_date = date.strftime("%d %B %Y")
 
@@ -99,6 +99,7 @@ def get_calorie_window_stats(
         total_calories_in_window += int(date_calories)
         result['history'].append({
             "type": "entry",
+            "id": doc['_id'],
             "date": str(date),
             "display_date": display_date,
             field: date_calories

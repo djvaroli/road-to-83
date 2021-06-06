@@ -124,8 +124,11 @@ def create_new_calorie_entry(
     metrics = {
         "calories": entry.calories,
     }
-    timestamp = int(time.time() + 24 * 3600)
-    result = log_metrics_in_es(metrics=metrics, user_id="client", document_id="to-delete-client", timestamp=timestamp)
+    result = log_metrics_in_es(
+        metrics=metrics,
+        user_id="client",
+        timestamp=entry.timestamp
+    )
     return result
 
 
