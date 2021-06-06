@@ -9,7 +9,7 @@ RUN yarn build
 
 # set up nginx as our web-server
 FROM nginx:stable-alpine as production-build
-COPY --from=build-stage /app/dist/ /usr.share/nginx/html
+COPY --from=build-stage /app/dist/ /usr/share/nginx/html
 COPY ./scripts/run.sh .
 COPY ./.nginx/ .nginx/
 
