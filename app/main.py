@@ -4,9 +4,11 @@ from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
 from twilio.twiml.messaging_response import MessagingResponse
 
+from elasticsearch_utils import delete_document_by_id, update_document_by_id
 from messaging_utils import get_pipeline_for_sms_command
-from bio_metrics_utils import get_calorie_window_stats
+from bio_metrics_utils import get_calorie_window_stats, log_metrics_in_es
 from decorators import validate_user_auth_level, messaging_response
+from pydantic_models import NewCalorieEntry, DeleteEntry, EditEntry
 
 app = FastAPI()
 app.add_middleware(
@@ -117,11 +119,29 @@ def get_calorie_stats_in_window(
 
 @app.post("/calories/entry/create")
 def create_new_calorie_entry(
-        calories: int
+        entry: NewCalorieEntry
 ):
-    print(calories)
-    return {}
+    metrics = {
+        "calories": entry.calories,
+    }
+    timestamp = int(time.time() + 24 * 3600)
+    result = log_metrics_in_es(metrics=metrics, user_id="client", document_id="to-delete-client", timestamp=timestamp)
+    return result
 
 
+@app.post("/calories/entry/edit")
+def delete_entry(
+        body: EditEntry
+):
+    result = update_document_by_id(body.document_id, document_body=body.updatedDocument, index=body.index)
+    return result
+
+
+@app.post("/calories/entry/delete")
+def delete_entry(
+        body: DeleteEntry
+):
+    result = delete_document_by_id(body.document_id, index=body.index)
+    return result
 
 

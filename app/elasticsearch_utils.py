@@ -49,3 +49,18 @@ def delete_document_by_id(
     """
     es = get_es_client()
     return es.delete(index=index, id=document_id)
+
+
+def update_document_by_id(
+        document_id,
+        document_body: dict,
+        index: str
+):
+    es = get_es_client()
+    body = {
+        "doc": {
+            **document_body
+        }
+    }
+    return es.update(index=index, id=document_id, body=body)
+

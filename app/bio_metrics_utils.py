@@ -44,7 +44,7 @@ def log_metrics_in_es(
 
 @add_request_status_info
 def get_calorie_window_stats(
-        window_size_days: int = 7,
+        window_size_days: int = 14,
         index: str = "road83-metric-logs",
         field: str = "calories",
         order: str = "desc"
@@ -96,7 +96,7 @@ def get_calorie_window_stats(
             continue
         unique_dates.add(display_date)
         date_calories = hit[field]
-        total_calories_in_window += date_calories
+        total_calories_in_window += int(date_calories)
         result['history'].append({
             "type": "entry",
             "date": str(date),
