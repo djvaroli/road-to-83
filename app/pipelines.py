@@ -100,3 +100,21 @@ def sms_to_what_if_calorie_pipeline(
     result = delete_document_by_id("document-to-delete", index="road83-metric-logs")
     return summary_text
 
+
+@messaging_response_result
+def track_metric_pipeline(
+        sms_body: str,
+        from_: str,
+        timestamp: int
+):
+    """
+    Takes information in a sms message and stores the appropriate metric in the database
+    :param sms_body:
+    :param from_:
+    :param timestamp:
+    :return:
+    """
+    metrics = parse_text_message(sms_body)
+    result = log_metrics_in_es(metrics, user_id=from_, timestamp=timestamp)
+    return "Metrics logged successfully!"
+

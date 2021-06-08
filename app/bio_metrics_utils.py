@@ -125,3 +125,61 @@ def get_calorie_window_stats(
     return result
 
 
+def get_weight_history(
+        window_size: int = 30,
+        index: str = "road83-metric-logs",
+        field: str = "weight",
+        order: str = "asc",
+        sort_field: str = "date"
+) -> Dict:
+    es = elasticsearch_utils.get_es_client()
+    query = {
+        "size": 5000,
+        "sort": {
+            sort_field: {"order": order}
+        },
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "exists": {
+                            "field": field
+                        }
+                    },
+                    {
+                        "range": {
+                            "date": {
+                                "gte": f"now-{window_size}d"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+
+    documents = es.search(body=query, index=index)['hits']['hits']
+
+    result = {
+        "history": [],
+        "summary": {}
+    }
+    for doc in documents:
+        doc_id = doc["_id"]
+        source = doc["_source"]
+
+        result['history'].append({
+            "weight": source[field],
+            "date": parser.parse(source["date"]),
+            "document_id": doc_id
+        })
+
+    # hardcode for now, no need to overcomplicate things yet
+    result['summary'] = {
+        "target_weight": 83.0,
+        "start_weight": 97.0,
+        "step1": 87.0,
+        "step2": 85.0
+    }
+
+    return result

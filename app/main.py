@@ -4,11 +4,12 @@ from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
 from twilio.twiml.messaging_response import MessagingResponse
 
+from apex_charts_utils import line_series_dict
 from elasticsearch_utils import delete_document_by_id, update_document_by_id
 from messaging_utils import get_pipeline_for_sms_command
-from bio_metrics_utils import get_calorie_window_stats, log_metrics_in_es
+from bio_metrics_utils import get_calorie_window_stats, log_metrics_in_es, get_weight_history
 from decorators import validate_user_auth_level, messaging_response
-from pydantic_models import NewCalorieEntry, DeleteEntry, EditEntry
+from pydantic_models import NewCalorieEntry, DeleteEntry, EditEntry, ResponseContent
 
 app = FastAPI()
 app.add_middleware(
@@ -115,6 +116,64 @@ def get_calorie_stats_in_window(
         }
     }
     return stats
+
+
+@app.get("/history/weight")
+def get_weight_history_endpoint(
+        windowSizeDays: int = 30
+):
+    # this is not the best way, however this is sufficient to verify the feature design
+    weight_data = get_weight_history(window_size=windowSizeDays)
+    print(weight_data)
+    weight_summary = weight_data['summary']
+    weight_history = weight_data['history']
+
+    start_weight = weight_summary['start_weight']
+    step1_weight = weight_summary['step1']
+    step2_weight = weight_summary['step2']
+    target_weight = weight_summary['target_weight']
+
+    series = [
+        line_series_dict("Weight history", [entry['weight'] for entry in weight_history]),
+        line_series_dict("Starting weight", [start_weight for _ in range(len(weight_history))]),
+        line_series_dict("Step 1", [step1_weight for _ in range(len(weight_history))]),
+        line_series_dict("Step 2", [step2_weight for _ in range(len(weight_history))]),
+        line_series_dict("Target weight", [target_weight for _ in range(len(weight_history))])
+    ]
+    weight_data['series'] = series
+    weight_data['chartOptions'] = {
+        "colors": ["#4285F4", "#DB4437", "#F4B400", "#b9ff00", "#0F9D58"],
+        "chart": {
+            "height": 500,
+            "type": "line"
+        },
+        "stroke": {
+            "width": [3, 3, 3, 3, 3],
+            "dashArray": [0, 5, 5, 5, 5],
+        },
+        "title": {
+            "text": "Weight"
+        },
+        "dataLabels": {
+            "enabled": True,
+            "enabledOnSeries": []
+        },
+        "labels": [entry['date'] for entry in weight_history],
+        "xaxis": {
+            "type": "datetime"
+        },
+        "yaxis": [
+            {
+                "title": {
+                    "text": "Weight (kg)"
+                },
+                "min": 80.0,
+                "max": 100.0
+            },
+        ]
+    }
+
+    return weight_data
 
 
 @app.post("/calories/entry/create")

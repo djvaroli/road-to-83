@@ -12,7 +12,7 @@ Vue.use(Buefy)
 Vue.use(VueApexCharts)
 Vue.use(VueAxios, axios)
 Vue.axios.defaults.baseURL = process.env.VUE_APP_BASE_URL
-
+console.log(process.env.VUE_APP_BASE_URL)
 
 Vue.component('apexchart', VueApexCharts)
 Vue.config.productionTip = false

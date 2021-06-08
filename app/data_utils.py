@@ -20,12 +20,13 @@ def parse_text_message(
     :return:
     """
     message_clean = clean_and_split_string(body.lower().strip())
-    assert len(message_clean) <= 2
-    assert message_clean[0] in VALID_LOGGING_FIELDS
+    assert len(message_clean) == 3
+    assert message_clean[1] in VALID_LOGGING_FIELDS
+    command, metric, value = message_clean
 
-    processing_operation = FIELD_PROCESSING_OP.get(message_clean[0])
+    processing_operation = FIELD_PROCESSING_OP.get(metric)
     result = {
-        message_clean[0]: processing_operation(message_clean[1])
+        metric: processing_operation(value)
     }
 
     return result
