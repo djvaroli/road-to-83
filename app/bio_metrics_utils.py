@@ -171,7 +171,8 @@ def get_weight_history(
         result['history'].append({
             "weight": source[field],
             "date": parser.parse(source["date"]),
-            "document_id": doc_id
+            "display_date": parser.parse(source["date"]).strftime("%d %B %Y @ %I %p"),
+            "id": doc_id
         })
 
     # hardcode for now, no need to overcomplicate things yet

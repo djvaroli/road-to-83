@@ -158,7 +158,7 @@ def get_weight_history_endpoint(
             "enabled": True,
             "enabledOnSeries": []
         },
-        "labels": [entry['date'] for entry in weight_history],
+        "labels": [entry['display_date'] for entry in weight_history],
         "xaxis": {
             "type": "datetime"
         },

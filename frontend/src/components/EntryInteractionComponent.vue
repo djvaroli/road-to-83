@@ -5,9 +5,20 @@
         <b-input
             v-model="newCalorieQuantity"
             type="number"
-            placeholder="Enter calories"
+            placeholder="Enter value"
+            required
         >
         </b-input>
+        <b-field>
+          <b-select placeholder="Metric name" v-model="fieldOption" class="margin-left-1" required>
+            <option
+                v-for="option in options"
+                :value="option"
+                :key="option">
+              {{ option }}
+            </option>
+          </b-select>
+        </b-field>
         <b-field>
           <b-datetimepicker
               placeholder="Type or select a date..."
@@ -15,7 +26,9 @@
               icon="calendar-today"
               :locale="undefined"
               class="margin-left-1"
-              editable>
+              editable
+              required
+          >
           </b-datetimepicker>
         </b-field>
         <b-button
@@ -81,16 +94,18 @@ export default {
   data() {
     return {
       newCalorieQuantity: null,
+      fieldOption: null,
       editCalorieQuantity: null,
       editEntryId: null,
       deleteEntryId: null,
-      selectedDate: new Date()
+      selectedDate: new Date(),
+      options: ["calories", "weight"]
     }
   },
   methods: {
     createEntry() {
-      if (!this.newCalorieQuantity || !this.selectedDate) {
-        this.openDangerToast("You forgot to enter a calorie amount or date of entry!");
+      if (!this.newCalorieQuantity || !this.selectedDate || !this.fieldOption) {
+        this.openDangerToast("Looks like you are missing some info!");
         return;
       }
       this.axios.post("/calories/entry/create", {

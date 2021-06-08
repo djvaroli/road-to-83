@@ -31,12 +31,4 @@ export default {
     display: flex;
     flex-direction: column;
   }
-
-  .dashboard-row {
-    display: flex;
-    margin-bottom: 1rem;
-    @media screen and (max-width: $mobile-screen-max-width) {
-      flex-direction: column;
-    }
-  }
 </style>

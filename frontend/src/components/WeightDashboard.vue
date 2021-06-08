@@ -1,18 +1,21 @@
 <template>
-  <div id="weight-history-figure" class="figure flex-item-space-right">
-    <div class="plot">
-      <apexchart type="line" height="350" :options="data.chartOptions" :series="data.series"></apexchart>
+  <div class="weight-dashboard">
+    <div class="dashboard-row">
+      <WeightHistoryGraph :series="data.series" :chartOptions="data.chartOptions"></WeightHistoryGraph>
+    </div>
+    <div class="dashboard-row">
+      <WeightHistoryTable :history="data.history"></WeightHistoryTable>
     </div>
   </div>
 </template>
 
 <script>
+import WeightHistoryGraph from "./WeightHistoryGraph";
+import WeightHistoryTable from "./WeightHistoryTable";
 export default {
   name: "WeightDashboard",
+  components: {WeightHistoryTable, WeightHistoryGraph},
   props: ["data"],
-  mounted () {
-    console.log(this.data);
-  }
 }
 </script>
 

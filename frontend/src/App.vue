@@ -11,7 +11,7 @@
           <WeightDashboard :data="weightData"></WeightDashboard>
         </template>
       </b-tab-item>
-      <b-tab-item label="Interact" icon="chart-donut">
+      <b-tab-item label="Interact" icon="chart-donut" v-if="showInteractTab">
         <EntryInteractionComponent @entry-update="fetchCalorieData"></EntryInteractionComponent>
       </b-tab-item>
     </b-tabs>
@@ -42,7 +42,8 @@ export default {
         series: [],
         chartOptions: {},
         history: []
-      }
+      },
+      showInteractTab: window.innerWidth > 1000
     }
   },
   methods: {
@@ -75,6 +76,9 @@ export default {
   mounted() {
     this.fetchCalorieData();
     this.fetchWeightData();
+    window.onresize = () => {
+      this.showInteractTab = window.innerWidth > 1000
+    }
   }
 }
 </script>
