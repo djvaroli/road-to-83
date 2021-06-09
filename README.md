@@ -64,9 +64,9 @@ At this point you should have a frontend part running on port 8080 and a backend
 
 This is what the app looks like now, but as time goes on and I come back to it, I hope to make this nicer, easier to use and also more mobile-friendly.
 
-! [Should be an image here](.github/demo_images/1.png "Dashboard 1")
+![Should be an image here](.github/demo_images/1.png "Dashboard 1")
 
 And the second dashboard
 
-! [Should be an image here](.github/demo_images/2.png "Dashboard 2")
+![Should be an image here](.github/demo_images/2.png "Dashboard 2")
 
