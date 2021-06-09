@@ -11,8 +11,9 @@ class ResponseContent(BaseModel):
     error_message: Optional[Union[str, None]] = None
 
 
-class NewCalorieEntry(BaseModel):
-    calories: int
+class NewEntry(BaseModel):
+    field: str
+    value: float
     timestamp: int
 
     @validator("timestamp")

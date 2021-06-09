@@ -9,7 +9,7 @@ from elasticsearch_utils import delete_document_by_id, update_document_by_id
 from messaging_utils import get_pipeline_for_sms_command
 from bio_metrics_utils import get_calorie_window_stats, log_metrics_in_es, get_weight_history
 from decorators import validate_user_auth_level, messaging_response
-from pydantic_models import NewCalorieEntry, DeleteEntry, EditEntry, ResponseContent
+from pydantic_models import DeleteEntry, EditEntry, ResponseContent, NewEntry
 
 app = FastAPI()
 app.add_middleware(
@@ -124,7 +124,6 @@ def get_weight_history_endpoint(
 ):
     # this is not the best way, however this is sufficient to verify the feature design
     weight_data = get_weight_history(window_size=windowSizeDays)
-    print(weight_data)
     weight_summary = weight_data['summary']
     weight_history = weight_data['history']
 
@@ -134,7 +133,7 @@ def get_weight_history_endpoint(
     target_weight = weight_summary['target_weight']
 
     series = [
-        line_series_dict("Weight history", [entry['weight'] for entry in weight_history]),
+        line_series_dict("Current weight", [entry['weight'] for entry in weight_history]),
         line_series_dict("Starting weight", [start_weight for _ in range(len(weight_history))]),
         line_series_dict("Step 1", [step1_weight for _ in range(len(weight_history))]),
         line_series_dict("Step 2", [step2_weight for _ in range(len(weight_history))]),
@@ -150,6 +149,10 @@ def get_weight_history_endpoint(
         "stroke": {
             "width": [3, 3, 3, 3, 3],
             "dashArray": [0, 5, 5, 5, 5],
+            "curve": "smooth"
+        },
+        "markers": {
+          "size": [5, 0, 0, 0, 0]
         },
         "title": {
             "text": "Weight"
@@ -167,8 +170,8 @@ def get_weight_history_endpoint(
                 "title": {
                     "text": "Weight (kg)"
                 },
-                "min": 80.0,
-                "max": 100.0
+                "min": target_weight,
+                "max": start_weight
             },
         ]
     }
@@ -177,12 +180,13 @@ def get_weight_history_endpoint(
 
 
 @app.post("/calories/entry/create")
-def create_new_calorie_entry(
-        entry: NewCalorieEntry
+def create_new_entry(
+        entry: NewEntry
 ):
     metrics = {
-        "calories": entry.calories,
+        entry.field: entry.value
     }
+
     result = log_metrics_in_es(
         metrics=metrics,
         user_id="client",

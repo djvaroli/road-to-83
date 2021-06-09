@@ -34,6 +34,7 @@ def log_metrics_in_es(
         "user_id": user_id
     }
 
+    print(document)
     if document_id:
         result = es.index(index, body=document, id=document_id)
     else:
@@ -164,6 +165,7 @@ def get_weight_history(
         "history": [],
         "summary": {}
     }
+
     for doc in documents:
         doc_id = doc["_id"]
         source = doc["_source"]
