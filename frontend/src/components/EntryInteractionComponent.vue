@@ -4,7 +4,6 @@
       <b-field>
         <b-input
             v-model="newCalorieQuantity"
-            type="number"
             placeholder="Enter value"
             required
         >
@@ -52,7 +51,7 @@
       <b-input
           v-model="editCalorieQuantity"
           type="number"
-          placeholder="Updated calories"
+          placeholder="Updated value"
           class="margin-left-1"
       >
       </b-input>
@@ -109,7 +108,8 @@ export default {
         return;
       }
       this.axios.post("/calories/entry/create", {
-        "calories": parseInt(this.newCalorieQuantity),
+        "field": this.fieldOption,
+        "value": this.newCalorieQuantity,
         "timestamp": parseInt(this.selectedDate.getTime() / 1000)
       })
       .then( () => {
